@@ -31,7 +31,7 @@ const Footer = styled.div`
   justify-content: flex-end;
 `;
 
-//
+
 function PostWritePage(props){
     const navigate = useNavigate();
 
