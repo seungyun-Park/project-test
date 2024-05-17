@@ -46,7 +46,7 @@ const Checkbox = styled.input`
 
 function SignUpPage(){
     const [NickName, setNickName] = useState("");
-    const [ID, setID] = useState("");
+    const [Id, setID] = useState("");
     const [Password, setPassword] = useState("");
     const [Agree, setAgree] = useState(false);
 
@@ -65,14 +65,38 @@ function SignUpPage(){
 
     const navigate = useNavigate();
 
+    const [userInfo, setUserInfo] = useState(null);
+    useEffect(()=>{
+        fetch('http://localhost:4000/api/user')
+      .then((response) => response.json())
+      .then((data)=>setUserInfo(data));
+    }, []);
+
+    const userConfirm = () => {
+      if (!userInfo || userInfo.length === 0) {
+        alert("등록되지 않은 회원입니다.");
+        return false;
+      }
+    
+      const user = userInfo.find(user => user.id === Id && user.pw === Password);
+      if (!user) {
+        alert(`가입되었습니다. 아이디를 입력하여 로그인 해주세요 !`);
+        navigate("/login");
+        return true;
+      } else {
+        alert("이미 존재하는 아이디 입니다 !!");
+        return false;
+      }
+    }
+
     const onSubmitHandler = (e) => {
       e.preventDefault();
       
-      const formData = new FormData(e.target);
-      const nickname = formData.get('NickName');
-      const id = formData.get('ID');
-      const pw = formData.get('Password');
-      
+      const nickname = NickName; //??????????? 이게 맞음?
+      const id = Id;
+      const pw = Password;
+
+      if(userConfirm()){
       fetch('http://localhost:4000/api/user', {
           method: 'POST',
           headers:{
@@ -81,19 +105,11 @@ function SignUpPage(){
           body: JSON.stringify({
               nickname,
               id,
-              pw,
-          }),
-      });
-    }
-
-    const [userInfo, setUserInfo] = useState(null);
-
-
-    useEffect(()=>{
-        fetch('http://localhost:4000/api/user')
-      .then((response) => response.json())
-      .then((data)=>setUserInfo(data));
-    }, []);
+              pw
+            })
+          });
+        }
+      }
 
     return (
       <Wrapper>
@@ -101,7 +117,7 @@ function SignUpPage(){
             <LoginTitle>SignUp</LoginTitle>
             <br/>
             <InfoInput name='NickName' value={NickName} onChange={onNickNameHandler}/>
-            <InfoInput name='ID' value={ID} onChange={onIDHandler}/>
+            <InfoInput name='id' value={Id} onChange={onIDHandler}/>
             <InfoInput name='Password' value={Password} onChange={onPasswordHandler}/>
             <CheckboxLabel>
               <Checkbox type="checkbox" checked={Agree} onChange={onAgreeHandler} />
@@ -110,8 +126,7 @@ function SignUpPage(){
             <SignUpButton 
               title="Sign Up" 
               onClick={() => {
-                // navigate("/test");
-                alert("가입되었습니다. 아이디를 입력하여 로그인 해주세요.");
+
               }}/>
             </form>
             <Description>

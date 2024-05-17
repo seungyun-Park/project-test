@@ -33,7 +33,7 @@ const BoardLink = styled(NavLink)`
   }
 `;
 
-function SummaryBoard() {
+function SummaryBoard(props) {
   return (
     <BoardBox>
       <Title>민원 게시판</Title>

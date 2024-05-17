@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import InfoInput from '../components/InfoInput';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -33,11 +33,6 @@ const MovePage = styled(NavLink)`
   text-decoration: none;
 `
 
-const ErrorWrap = styled.div`
-  color: #ef0000;
-  font-size: 12px;
-`;
-
 const User = {
   id: '123',
   pw: '123'
@@ -55,17 +50,31 @@ function LoginPage(){
       setPassword(event.currentTarget.value);
     }
 
+    const [userInfo, setUserInfo] = useState(null);
+
+    useEffect(()=>{
+        fetch('http://localhost:4000/api/user')
+      .then((response) => response.json())
+      .then((data)=>setUserInfo(data));
+    }, []);
+  
+    const navigate = useNavigate();
+
     const onClickConfirmButton = () => {
-      if(ID === User.id && Password === User.pw) {
-        alert('로그인에 성공했습니다.')
+      if (!userInfo || userInfo.length === 0) {
+        alert("등록되지 않은 회원입니다.");
+        return false;
+      }
+    
+      const user = userInfo.find(user => user.id === ID && user.pw === Password);
+      if (user) {
+        alert(`${user.nickname}님 환영합니다!`);
         return true;
       } else {
         alert("등록되지 않은 회원입니다.");
         return false;
       }
     }
-
-    const navigate = useNavigate();
 
     return (
       <Wrapper>

@@ -17,7 +17,6 @@ const Td = styled.td`
 function Post(props){
   const {post, onClick} = props;
 
-
   return (
         <Tr onClick={onClick}>
             <Td>{post.id}</Td>
