@@ -22,7 +22,7 @@
 
     {
         "id": 2,
-        "board": "민원",
+        "board": "제보",
         "author": "김재환",
         "title": "학식 개선",
         "content": "",
@@ -37,7 +37,7 @@
 
     {
         "id": 3,
-        "board": "민원",
+        "board": "공지",
         "author": "익명",
         "title": "개코 라이브 지림",
         "content": "",

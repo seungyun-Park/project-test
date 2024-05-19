@@ -23,7 +23,7 @@ const Wrapper = styled.div`
 function ComplainPage(){
   const navigate = useNavigate();
 
-
+  
   return (
     <>
       <Header/>
@@ -38,7 +38,7 @@ function ComplainPage(){
           <input placeholder='검색...'/>
         </Wrapper>
 
-        <PostTable />
+        <PostTable postwhat='민원'/>
     </>
   );
 };

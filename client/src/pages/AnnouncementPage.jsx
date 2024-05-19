@@ -38,7 +38,7 @@ function AnnouncementPage(){
           <input placeholder='검색...'/>
         </Wrapper>
 
-        <PostTable />
+        <PostTable postwhat='공지'/>
     </>
   );
 };

@@ -38,7 +38,7 @@ function ReportPage(){
           <input placeholder='검색...'/>
         </Wrapper>
 
-        <PostTable />
+        <PostTable postwhat='제보'/>
     </>
   );
 };
