@@ -24,9 +24,13 @@ const Td = styled.td`
 
 
 function PostTable(props){
-  const { postwhat } = props;
+  const { postwhat, currentPage, postsPerPage } = props;
   const navigate = useNavigate();
   let boardPosts = data.filter(post => post.board === postwhat);
+
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = boardPosts.slice(indexOfFirstPost, indexOfLastPost);
 
   if(postwhat === 'mypost'){
     boardPosts = [{
@@ -57,7 +61,7 @@ function PostTable(props){
             </thead>
 
               <PostList
-                    posts = {boardPosts} // 필터링된 게시물 전달
+                    posts = {currentPosts} // 필터링된 게시물 전달
                     onClickItem = {(item) =>{
                         navigate(`/post/${item.id}`);
                     }}
