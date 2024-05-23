@@ -168,7 +168,7 @@ const Post = [
 ];
 let postId = 16;
 
-app.post('/api/login', (req, res) => {
+app.post('/api/login', (req, res) => { //why post ?
   const { id, password } = req.body;
   const user = userInfo.find(u => u.id === id && u.pw === password);
   if (!user) {
