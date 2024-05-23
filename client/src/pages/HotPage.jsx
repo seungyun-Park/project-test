@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import PostTable from '../components/PostTable';
-import Button from '../components/Button';
-import { useNavigate } from 'react-router-dom';
 import Header from "../components/Header"
 import Pagination from '../components/Pagination';
 import { useState } from 'react';

@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 
@@ -10,7 +11,7 @@ dotenv.config();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(bodyParser.json());
 
 let userid = 3;
 const userInfo = [
@@ -165,6 +166,7 @@ const Post = [
     recommends: 2,
   }
 ];
+let postId = 16;
 
 app.post('/api/login', (req, res) => {
   const { id, password } = req.body;
@@ -191,6 +193,8 @@ app.get('/api/user', (req, res) => {
 
 app.post('/api/user', (req, res) => {
   const { nickname, id, pw } = req.body;
+  //닉네임 고유, id 고유
+
   userInfo.push({
     userid: userid++,
     nickname,
@@ -214,6 +218,18 @@ app.put('/api/user', (req, res) => {
   return res.json({ message: 'User information updated successfully' });
 });
 
+app.delete('/api/user', (req, res) => {
+  const { id } = req.body;
+
+  const userIndex = userInfo.findIndex(user => user.id === id);
+  if (userIndex === -1) {
+    return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+  }
+
+  userInfo.splice(userIndex, 1);
+  res.status(200).json({ message: '회원 탈퇴가 성공적으로 처리되었습니다.' });
+});
+
 app.get('/api/home', (req, res) => {
   const { board } = req.query;
   let filteredPosts;
@@ -232,6 +248,93 @@ app.get('/api/home', (req, res) => {
 
   res.json({ posts: filteredPosts });
 });
+
+app.get('/api/posts/:id', (req, res) => {
+  const { id } = req.params;
+  const post = Post.find(post => post.id == id);
+  if (post) {
+      res.json(post);
+  } else {
+      res.status(404).json({ message: 'Post not found' });
+  }
+});
+
+app.post('/api/posts/:id/recommend', (req, res) => {
+  const { id } = req.params;
+  const { nickname } = req.body;
+  const post = Post.find(post => post.id == id);
+
+  if (post) {
+      if (post.recommendedBy.includes(nickname)) {
+          return res.status(400).json({ message: 'Already recommended' });
+      }
+
+      post.recommends += 1;
+      post.recommendedBy.push(nickname);
+      res.status(200).json({ message: 'Post recommended' });
+  } else {
+      res.status(404).json({ message: 'Post not found' });
+  }
+});
+
+app.post('/api/posts', (req, res) => {
+  const { title, content, author, board } = req.body;
+
+  if (!title || !content || !author || !board) {
+      return res.status(400).json({ message: '모든 필드를 채워주세요.' });
+  }
+
+  const newPost = {
+      id: postId++,
+      title,
+      content,
+      author,
+      board,
+      recommends: 0,
+      recommendedBy: [],
+      comments: []
+  };
+
+  Post.push(newPost);
+  res.status(201).json(newPost);
+});
+
+app.put('/api/posts/:id', (req, res) => {
+  const { id } = req.params;
+  const { title, content, author } = req.body;
+  const post = Post.find(post => post.id == id);
+
+  if (post) {
+      if (post.author !== author) {
+          return res.status(403).json({ message: '작성자만 수정할 수 있습니다.' });
+      }
+
+      post.title = title || post.title;
+      post.content = content || post.content;
+      res.status(200).json(post);
+  } else {
+      res.status(404).json({ message: 'Post not found' });
+  }
+});
+
+app.delete('/api/posts/:id', (req, res) => {
+  const { id } = req.params;
+  const { author } = req.body;
+  const postIndex = Post.findIndex(post => post.id == id);
+
+  if (postIndex > -1) {
+      const post = Post[postIndex];
+      if (post.author !== author) {
+          return res.status(403).json({ message: '작성자만 삭제할 수 있습니다.' });
+      }
+
+      Post.splice(postIndex, 1);
+      res.status(200).json({ message: 'Post deleted' });
+  } else {
+      res.status(404).json({ message: 'Post not found' });
+  }
+});
+
 
 app.get('/api/complain', (req, res) => {
   const { page = 1, limit = 10 } = req.query;
@@ -312,6 +415,11 @@ app.get('/api/search', (req, res) => {
     filteredPosts = Post.filter(post => 
     post.title.includes(query) && post.author === author
     );
+  }
+  else if(board === "hot"){
+    filteredPosts = Post.filter(post => 
+      post.title.includes(query) && post.recommends >= 10
+   );
   }
   else{
     filteredPosts = Post.filter(post => 

@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import InfoInput from '../components/InfoInput';
 import { NavLink, useNavigate } from 'react-router-dom';
 import LoginButton from '../components/LoginButton';
-import axios from 'axios';
-import { useForm } from '../hooks/useForm';
 
 
 const Wrapper = styled.div`
@@ -34,38 +32,6 @@ const MovePage = styled(NavLink)`
   font-size: 12px;
   text-decoration: none;
 `
-
-// function LoginPage(){
-//   const [id, changeId] = useForm();
-//   const [pw, changePW] = useForm();
-//   const router = useNavigate();
-
-//   const login = async (id, pw) => {
-//     const result = await axios.post('http://localhost:4000/api/login', {
-//       id: id,
-//       pw: pw,
-//     });
-//     return result.data.data;
-//   };
-
-//   const onClick = async () => {
-//     const result = await login(id, pw);
-//     localStorage.setItem('accessToken', result.accessToken);
-//     localStorage.setItem('refreshToken', result.refreshToken);
-//     router(`/home`);
-//   };
-
-//   return (
-//     <Wrapper>
-//       <LoginTitle>로그인하기</LoginTitle>
-//       <form>
-//         <InfoInput name='ID' value={id} onChange={changeId}/>
-//         <InfoInput name='Password' value={pw} onChange={changePW}/>
-//         <LoginButton onClick={onClick} title="Login"/>
-//       </form>
-//     </Wrapper>
-//   );
-// }
 
 function LoginPage(){
     const [ID, setID] = useState("");
